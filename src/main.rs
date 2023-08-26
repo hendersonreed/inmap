@@ -43,7 +43,36 @@ execute = [
     print!("{}", usage);
 }
 
-fn check_config(config: &Config) {
+/// checks that each line of the preview and execute commands only have one set of {}.
+fn check_config(config: &Config) -> Result<(), String> {
+    let preview_matches: Vec<_> = config.preview
+	.matches("{}")
+	.collect();
+    if preview_matches.len() != 1 {
+	return Err(
+	    format!(
+		"Configured preview command:
+		\t{}
+		has incorrect number of instances of {{}}. Please reformat to have exactly 1.", 
+		config.preview)
+	    .trim_start()
+	    .into())
+    }
+    for each in &config.execute {
+	let command_matches: Vec<_> = each.command.matches("{}").collect();
+	if command_matches.len() != 1 {
+	    return Err(
+		format!(
+		    "Configured execute command: 
+		    \t{}: {}
+		    has incorrect number of instances of {{}}. Please reformat to have exactly 1.", 
+		    each.key, 
+		    each.command)
+	    .trim_start()
+	    .into())
+	}
+    }
+    Ok(())
 }
 
 /// Reads the passed argument as a toml file and returns it after validating it has required keys
@@ -53,9 +82,8 @@ fn process_config_args(arg_list: Vec<String>) -> Result<Config, Box<dyn Error>> 
 	2 =>  {
 	    let config_file = PathBuf::from(arg_list.last().unwrap());
 	    let contents = std::fs::read_to_string(config_file)?; // &mut contents)?;
-//	    let table = contents.parse::<Table>()?;
 	    let config: Config = toml::from_str(&contents)?;
-	    check_config(&config);
+	    let _ = check_config(&config)?;
 	    Ok(config)
 	},
 	_ => {
@@ -66,11 +94,12 @@ fn process_config_args(arg_list: Vec<String>) -> Result<Config, Box<dyn Error>> 
 }
 
 fn run_line(line: String, config: &Config) {
-    // we need the templating, to do the string replacement.
-    // do I need real templating, or is there a string function that can do substring replacement?
-    // we should probably do a quick validation of the config before it gets here, namely that the
-    // commands (preview and execute) are valid (i.e. have no more than one instance of "{}" which
-    // is our replacement string.
+    // clear the screen.
+    // replace {} in preview, execute it.
+    // replace {} in each execute line, display them, along with the key commands.
+    // wait for input (and if confirm, then wait for a <CR> as well.)
+    // execute matching execute line.
+    // if no execute matches input, then print an error and require a <CR> to continue.
     println!("this is some input: {}", line);
 }
 
