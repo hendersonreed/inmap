@@ -40,7 +40,7 @@ The user presses a key, at which point `inmap` substitutes the current line of s
 
 When `confirm` is true, `inmap` will print the substituted command after a key is pressed and require a `<CR>` before executing it.
 
-## pitfalls:
+## potential pitfalls:
 
 At the moment, `inmap` is not doing anything smart with substitution or escaping. It is behaving entirely naively. As a result, preprocessing your input to be shell-valid is recommended.
 
