@@ -1,15 +1,11 @@
 use std::env;
-use std::collections::HashMap;
 use std::error::Error;
-use std::io::prelude::*;
 use std::io;
 use std::path::PathBuf;
 use std::process::exit;
 use std::string::String;
 
 use serde::Deserialize;
-use toml::{Table,Value};
-use toml::map::Map;
 
 
 #[derive(Deserialize, Debug)]
