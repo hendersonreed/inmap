@@ -1,0 +1,8 @@
+preview = "firefox {}"
+confirm = false
+execute = [
+	{ key = "h", command = "rm {}" },
+	{ key = "j", command = "cp {} /backup" },
+	{ key = "k", command = "echo {}" },
+	{ key = "l", command = "grep {} | xargs rm" },
+]

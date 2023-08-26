@@ -1,0 +1,10 @@
+[inmap]
+preview = "firefox {}" {
+}
+confirm = false
+
+[execute]
+h = "rm {}"
+j = "cp {} /backup"
+k = "echo {}"
+l = "grep {} | xargs rm"
