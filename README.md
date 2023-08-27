@@ -1,3 +1,5 @@
+***note: this is incomplete software, and doesn't perform as advertised yet.***
+
 # inmap: faster human filtering.
 
 When sorting through data, often a decision must be made that can't be automated. For example, when sorting through URLs, do we want to keep a tab open, close it, or save it in our bookmarks?
