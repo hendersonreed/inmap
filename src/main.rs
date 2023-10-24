@@ -5,21 +5,9 @@ use std::path::PathBuf;
 use std::process::exit;
 use std::string::String;
 
-use serde::Deserialize;
-
-
-#[derive(Deserialize, Debug)]
-struct Config {
-    preview: String,
-    confirm: Option<bool>,
-    execute: Vec<ExecuteMap>,
-}
-
-#[derive(Deserialize, Debug)]
-struct ExecuteMap{
-    key: char,
-    command: String,
-}
+pub mod ui;
+pub mod model;
+use model::Config;
 
 fn print_usage() {
     let usage = r#"
@@ -93,16 +81,29 @@ fn process_config_args(arg_list: Vec<String>) -> Result<Config, Box<dyn Error>> 
     }
 }
 
-fn run_line(line: String, config: &Config) {
+fn run_line(line: Result<String, std::io::Error>, config: &Config) {
     // clear the screen.
     // replace {} in preview, execute it.
     // replace {} in each execute line, display them, along with the key commands.
     // wait for input (and if confirm, then wait for a <CR> as well.)
     // execute matching execute line.
     // if no execute matches input, then print an error and require a <CR> to continue.
-    println!("this is some input: {}", line);
+    match line {
+	Ok(line) => {
+	    println!("this is some input: {}", line);
+	    let press = ui::draw_ui(&line, &config,);
+	    let _ = execute_line(press, line, config);
+	}
+	Err(e) => {
+	    eprintln!("{}", e);
+	    exit(1);
+	}
+    }
 }
 
+fn execute_line(press: String, line: String, config: &Config) -> Result<i8, Box<dyn Error>> {
+    Ok(0)
+}
 
 fn main() {
     let config = process_config_args(env::args().collect());
@@ -111,7 +112,7 @@ fn main() {
 	Ok(config) => {
 	    println!("ok config!");
 	    for line in lines {
-		run_line(line.unwrap(), &config);
+		run_line(line, &config);
 	    }
 	},
 	Err(e) => {
